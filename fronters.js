@@ -38,12 +38,29 @@ async function getSystem() {
     return await response.json()
 }
 
+function backButton() {
+    // Back Button (Alli)
+    let segment = `<form>
+                        <input type="submit" value="Go Back">
+                    </form>
+                    <!--<br>
+                    <a href="systems.html">
+                        <input type="submit" value="System info">
+                    </a>-->`
+
+    let goBack = document.querySelector('.goBack');
+    goBack.innerHTML = segment;
+
+}
+
 // Renders the list of current fronters
 async function renderFronters() {
     const fronters = await getFronters();
 
     // Handle system being switched out
-    if (fronters == null) {
+    if (fronters.members.length == 0) {
+        container.innerHTML = `<p>This system is currently switched out.</p>`
+        backButton()
         return
     }
 
@@ -125,20 +142,10 @@ async function renderFronters() {
         html += htmlSegment;
     });
 
-    // Back Button (Alli)
-    let segment = `<form>
-                        <input type="submit" value="Go Back">
-                    </form>
-                    <!--<br>
-                    <a href="systems.html">
-                        <input type="submit" value="System info">
-                    </a>-->`
-
     // Display the formatted fronters
     container.innerHTML = html;
 
-    let goBack = document.querySelector('.goBack');
-    goBack.innerHTML = segment;
+    backButton()
 }
 
 // Function for displaying system ID input
