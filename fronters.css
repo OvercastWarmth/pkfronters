@@ -1,17 +1,21 @@
+/* Max avatar size */
 img {
     max-width: 200px;
     max-height: 200px;
 }
 
+/* Main page styling */
 body {
     background-color: #37393f;
     color: white;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-/* .container {
+/* Embed-style fronter items */
+.fronter {
     background-color: #2f3136;
     border-radius: 5px;
-    border-left: 4px solid aqua;
+    border-left: 4px solid #202225;
     width: 300px;
-} */
+    overflow: auto;
+}
