@@ -2,8 +2,19 @@
 body {
     background-color: #36393f;
     color: white;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    width: 100vw;
+    min-height: 100vh;
+    min-height: 100dvh; /* https://www.w3.org/TR/css-values-4/#viewport-variants */
+    overflow-x: hidden;
+    margin: 0;
+}
+
+main {
+    padding: 1rem 3rem;
 }
 
 /* Hyperlink styling */
@@ -12,41 +23,65 @@ a {
 }
 
 /* Title styling */
-#title {
+header {
     font-family: 'Baloo Chettan 2', cursive;
-    font-size: 40px;
+    font-size: 20px;
+    text-align: center;
+
+    padding: 0.5rem 3rem;
+}
+
+h1 {
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid gray;
+    display: inline-block;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
 }
 
 /* Discord embed-style cards */
 .card {
     background-color: #2f3136;
     border-radius: 4px;
-    width: 25em;
+    width: 25rem;
     height: 200px;
+
     /* Left border (colour is specified in JS) */
     border-left-style: solid;
     border-left-width: 4px;
+
     /* Resize the card so it always fits the avatar */
     overflow: auto;
+
     /* Add a gap around the cards */
     margin: 0 1em 1em 0;
-    /* Cards should go left-to-right, top-to-bottom, instead of just
-    top-to-bottom */
-    float: left;
 }
 
 .card img {
-    /* Max avatar size */
-    max-width: 200px;
-    max-height: 200px;
+    /* Scales the avatar to fit the image  */
+    object-fit: cover;
+
+    /* Avatar size */
+    width: 200px;
+    height: 200px;
+
     /* Vertically centered */
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-    /* Float to the left of the text */
+
+    /* Float to the left of the text; TODO: remove in favor of flexboxes */
     float: left;
+
     /* Gap between text and avatar */
     margin-right: 1em;
+
     /* Curve the right corners, but not the left ones that are against the
     left border of the card */
     border-radius: 0 5% 5% 0;
@@ -55,4 +90,53 @@ a {
 /* Make the cards for non-fronting members partially transparent */
 .card.non-fronting {
     opacity: 25%;
+}
+
+.card:not(.non-fronting) {
+    /* Subtle shadow */
+    box-shadow: 0px 2px 12px -6px rgba(0, 0, 0, 0.33);
+}
+
+footer {
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.goBack {
+    margin-right: 0.5rem;
+}
+
+input[type="submit"], .button, button {
+    all: unset;
+    user-select: none;
+    cursor: pointer;
+
+    color: #d0d0d0;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 1px 4px;
+
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+input[type="submit"]:hover, .button:hover, button:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+    color: white;
+    border-color: white;
+    text-decoration: underline;
+}
+
+input[type="submit"]:active, input[type="submit"]:focus,
+.button:active, .button:focus,
+button:active, button:focus {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.credits {
+    margin-left: 0.5rem;
 }
