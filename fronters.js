@@ -25,11 +25,33 @@ async function pkAPI(path) {
 }
 
 async function getFronters(system) {
-    return await pkAPI(`systems/${system}/fronters`)
+    let fronters = (await pkAPI(`systems/${system}/fronters`)).members
+    // Return only the UUIDs. The other data we get from the `getMembers()`
+    // call, so we only need to store it there and not here too. If the system
+    // is switched out, it will return an empty array.
+    return fronters.map(i => {
+        return i.uuid
+    })
 }
 
-async function getSystem(system) {
+async function getMembers(system) {
+    return await pkAPI(`systems/${system}/members`)
+}
+
+async function getSystemInfo(system) {
     return await pkAPI(`systems/${system}`)
+}
+
+// Separate members into groups depending on whether they're fronting or not
+function separateMembers(fronting, members) {
+    return {
+        'fronting': members.filter(member => {
+            return fronting.indexOf(member.uuid) != -1
+        }),
+        'nonFronting': members.filter(member => {
+            return fronting.indexOf(member.uuid) == -1
+        })
+    }
 }
 
 function backButton() {
@@ -47,36 +69,52 @@ function backButton() {
 
 }
 
-// Renders the list of current fronters
-async function renderFronters(system) {
-    const fronters = await getFronters(system);
-
-    // Handle system being switched out
-    if (fronters.members.length == 0) {
-        container.innerHTML = `<p>This system is currently switched out.</p>`
-        backButton()
-        return
+async function renderCard(member, isFronting) {
+    /* TODO: Replace this with switch start time
+    let dateObject
+    let fronterCreated
+    if(fronter.created != null) {
+        dateObject = fronter.created;
+        fronterCreated = dateObject.toLocaleString();
     }
+    */
+    return `
+        <div class="card ${isFronting ? 'fronting' : 'non-fronting'}", style="border-left-color: #${member.color}">
+            <img src="${member.avatar_url == null ? 'blank.png' : member.avatar_url}" alt="Profile Picture">
+            <h2>${member.name}</h2>
+            <p>${member.pronouns == null ? 'This member has no pronouns set.' : member.pronouns}</p>
+        </div>
+    `
+}
 
-    // System name logic (Alli)
-    const sysObject = await getSystem(system);
-
+async function renderCards(system) {
+    // Fetch requests in parallel
+    let [fronting, members, systemInfo] = await Promise.all([
+        getFronters(system),
+        getMembers(system),
+        getSystemInfo(system)
+    ])
+    
+    // Separate the members
+    members = separateMembers(fronting, members)
+    delete fronting
+    
     // System name container
     const nameContainer = document.getElementById("name-container");
-
+    
     // System Colour
-    let colour = sysObject.color;
+    let colour = systemInfo.color;
 
-    if (sysObject.name != null) {
+    if (systemInfo.name != null) {
         // Use system's name (if it has one)
-        let sysName = sysObject.name;
+        let sysName = systemInfo.name;
         sysName += " Fronter Display";
 
         document.getElementById("tabname").innerHTML = sysName
 
         // Add system colour to title (if it has one)
         if (colour != null) {
-            nameContainer.innerHTML = `<h1><span class="title" style = "color: #${colour};"> ${sysObject.name} </span> Fronter Display</h1>`
+            nameContainer.innerHTML = `<h1><span class="title" style = "color: #${colour};"> ${systemInfo.name} </span> Fronter Display</h1>`
         } else {
             nameContainer.innerHTML = `<h1>${sysName}</h1>`
         }
@@ -90,55 +128,18 @@ async function renderFronters(system) {
             nameContainer.innerHTML = `<h1><code> ${system} </code> Fronter Display</h1>`
         }
     }
-
-    // HTMl Builder
-    let html = '';
-    fronters.members.forEach(fronter => {
-        // Avatar logic
-        let avatar
-
-        if (fronter.avatar_url != null) {
-            // Fronter's avatar
-            avatar = `<img src="${fronter.avatar_url}" alt="Profile Picture", style="float:left;">`
-        }
-        else {
-            // Use placeholder avatar if there is no avatar.
-            avatar = `<img src="blank.png" alt="Profile Picture", style="float:left;">`
-        }
-
-        // Pronouns logic (Alli)
-        let fronterPronouns
-
-        if (fronter.pronouns != null) {
-            fronterPronouns = fronter.pronouns
-        } else {
-            // Fallback for if fronter has no pronouns set
-            fronterPronouns = "This fronter has no pronouns set."
-        }
-
-        /* TODO: Replace this with switch start time
-        let dateObject
-        let fronterCreated
-        if(fronter.created != null) {
-            dateObject = fronter.created;
-            fronterCreated = dateObject.toLocaleString();
-        }
-        */
-
-        // Build fronter item
-        let htmlSegment = `<div class="fronter">
-                            ${avatar}
-                            <h2>${fronter.name}</h2>
-                            <p>${fronterPronouns}</p>
-                        </div>
-                        <br style="clear:both">`;
-
-        html += htmlSegment;
-    });
-
+    
+    let html = ''
+    for (const fronter of members.fronting) {
+        html += await renderCard(fronter, true)
+    }
+    for (const nonFronter of members.nonFronting) {
+        html += await renderCard(nonFronter, false)
+    }
+    
     // Display the formatted fronters
     container.innerHTML = html;
-
+    
     backButton()
 }
 
@@ -171,7 +172,7 @@ function showInput(reason) {
 if (system != null & system != "") {
     // Display fronters for requested system
     container.innerHTML = `<code>Loading fronters...</code>`
-    renderFronters(system);
+    renderCards(system);
 }
 else {
     // Display system input
