@@ -59,6 +59,7 @@ function backButton() {
     // TODO: refactor to use buttons instead, or add all the required aria properties
     let segment = `<form>
                         <input type="submit" value="Go Back">
+                        &mdash;
                     </form>
                     <!--<br>
                     <a href="systems.html">
@@ -164,9 +165,9 @@ function showInput(reason) {
     };
 
     // Create form for inputting system ID
-    container.innerHTML = `<form>
-                            <label name="sys">${label}</label>
-                            <input type="text" name="sys">
+    container.innerHTML = `<form class="system-form">
+                            <label for="sys">${label}</label>
+                            <input type="text" name="sys" id="sys">
                             <input type="submit" value="Submit">
                         </form>`
 }

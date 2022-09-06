@@ -50,7 +50,7 @@ h1 {
     background-color: #2f3136;
     border-radius: 4px;
     width: 25rem;
-    height: 200px;
+    min-height: 200px;
 
     /* Left border (colour is specified in JS) */
     border-left: 4px solid var(--border-color);
@@ -115,10 +115,6 @@ footer {
     align-items: center;
 }
 
-.goBack {
-    margin-right: 0.5rem;
-}
-
 input[type="submit"], .button, button {
     all: unset;
     user-select: none;
@@ -130,7 +126,7 @@ input[type="submit"], .button, button {
     background-color: rgba(0, 0, 0, 0.1);
     padding: 1px 4px;
 
-    transition: border-color 0.2s, background-color 0.2s;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
 }
 
 input[type="submit"]:hover, .button:hover, button:hover {
@@ -146,8 +142,66 @@ button:active, button:focus {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
+.system-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.system-form > label {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+input[type="text"] {
+    color: #d0d0d0;
+    border: 1px solid #d0d0d0;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.25);
+
+    margin-top: 2px;
+    margin-bottom: 8px;
+    padding: 4px;
+
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+input[type="text"]:hover {
+    color: white;
+    border-color: white;
+}
+
+input[type="text"]:active {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
 .credits {
-    margin-left: 0.5rem;
+    margin-left: 0.2rem;
+}
+
+.credits-list {
+    list-style: none;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.credits-list > li > h2 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.credits-list > li > ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.credits-list > li > ul > li::before {
+    content: "-";
+    user-select: none;
+    margin-right: 1em;
 }
 
 /* For screens where  */
