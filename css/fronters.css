@@ -53,14 +53,23 @@ h1 {
     height: 200px;
 
     /* Left border (colour is specified in JS) */
-    border-left-style: solid;
-    border-left-width: 4px;
+    border-left: 4px solid var(--border-color);
 
-    /* Resize the card so it always fits the avatar */
-    overflow: auto;
+    display: flex;
+    flex-direction: row;
 
     /* Add a gap around the cards */
-    margin: 0 1em 1em 0;
+    margin: 0.5rem;
+}
+
+.card.fronting {
+    /* Subtle shadow */
+    box-shadow: 0px 2px 12px -6px rgba(0, 0, 0, 0.33);
+}
+
+/* Make the cards for non-fronting members partially transparent */
+.card.non-fronting {
+    opacity: 25%;
 }
 
 .card img {
@@ -71,39 +80,39 @@ h1 {
     width: 200px;
     height: 200px;
 
-    /* Vertically centered */
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-
-    /* Float to the left of the text; TODO: remove in favor of flexboxes */
-    float: left;
-
-    /* Gap between text and avatar */
-    margin-right: 1em;
-
     /* Curve the right corners, but not the left ones that are against the
     left border of the card */
     border-radius: 0 5% 5% 0;
 }
 
-/* Make the cards for non-fronting members partially transparent */
-.card.non-fronting {
-    opacity: 25%;
+.card-info {
+    display: flex;
+    flex-direction: column;
+
+    /* Gap between text and avatar */
+    padding-left: 1em;
+
+    /* Gap between the text and the top of the card */
+    padding-top: 1rem;
 }
 
-.card:not(.non-fronting) {
-    /* Subtle shadow */
-    box-shadow: 0px 2px 12px -6px rgba(0, 0, 0, 0.33);
+.card-info h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.card-info h2 + p {
+    margin-top: 0;
 }
 
 footer {
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
 }
 
 .goBack {
@@ -139,4 +148,44 @@ button:active, button:focus {
 
 .credits {
     margin-left: 0.5rem;
+}
+
+/* For screens where  */
+@media screen and (max-width: 940px) {
+    main {
+        padding: 0.5rem 0.5rem;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    header {
+        font-size: 14px;
+        padding-bottom: 0;
+    }
+
+    .card {
+        flex-direction: column;
+        width: 100%;
+        height: fit-content;
+
+        border-left: none;
+
+        border-top: 4px solid var(--border-color);
+
+        align-items: center;
+    }
+
+    .card img {
+        margin-top: 0.5rem;
+        border-radius: 5%;
+    }
+
+    .card-info {
+        align-items: center;
+        padding-left: 0;
+    }
+
+    input[type="submit"], .button, button {
+        padding: 3px 7px;
+    }
 }
