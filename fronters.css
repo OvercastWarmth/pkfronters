@@ -3,7 +3,7 @@ img {
     max-width: 200px;
     max-height: 200px;
     /* border: 2px solid #F0F0F0; */
-    border-radius: 5%;
+    border-radius: 0 5% 5% 0;
     margin-right: 10px;
 }
 
