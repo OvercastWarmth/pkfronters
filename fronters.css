@@ -9,7 +9,7 @@ img {
 
 /* Main page styling */
 body {
-    background-color: #37393f;
+    background-color: #36393f;
     color: white;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     
@@ -29,7 +29,7 @@ a {
 /* Embed-style fronter items */
 .fronter {
     background-color: #2f3136;
-    border-radius: 5px;
+    border-radius: 4px;
     border-left: 4px solid #202225;
     width: 300px;
     overflow: auto;
