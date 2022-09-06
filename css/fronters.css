@@ -1,0 +1,58 @@
+/* Main page styling */
+body {
+    background-color: #36393f;
+    color: white;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    
+}
+
+/* Hyperlink styling */
+a {
+    color: #3c95cf;
+}
+
+/* Title styling */
+#title {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: 40px;
+}
+
+/* Discord embed-style cards */
+.card {
+    background-color: #2f3136;
+    border-radius: 4px;
+    width: 25em;
+    height: 200px;
+    /* Left border (colour is specified in JS) */
+    border-left-style: solid;
+    border-left-width: 4px;
+    /* Resize the card so it always fits the avatar */
+    overflow: auto;
+    /* Add a gap around the cards */
+    margin: 0 1em 1em 0;
+    /* Cards should go left-to-right, top-to-bottom, instead of just
+    top-to-bottom */
+    float: left;
+}
+
+.card img {
+    /* Max avatar size */
+    max-width: 200px;
+    max-height: 200px;
+    /* Vertically centered */
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Float to the left of the text */
+    float: left;
+    /* Gap between text and avatar */
+    margin-right: 1em;
+    /* Curve the right corners, but not the left ones that are against the
+    left border of the card */
+    border-radius: 0 5% 5% 0;
+}
+
+/* Make the cards for non-fronting members partially transparent */
+.card.non-fronting {
+    opacity: 25%;
+}
