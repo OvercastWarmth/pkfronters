@@ -29,7 +29,10 @@ a {
     /* Resize the card so it always fits the avatar */
     overflow: auto;
     /* Add a gap around the cards */
-    margin: 1em;
+    margin: 0 1em 1em 0;
+    /* Cards should go left-to-right, top-to-bottom, instead of just
+    top-to-bottom */
+    float: left;
 }
 
 .card img {
