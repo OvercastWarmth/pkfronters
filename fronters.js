@@ -2,6 +2,7 @@
     Credits for code:
     Ringlings
     Alli
+    Purrrpley
 */
 
 // Collect system ID from query string
@@ -11,31 +12,24 @@ const system = new URLSearchParams(queryString).get("sys");
 // Main document container
 const container = document.querySelector('.container');
 
-// Return fronters from pk api via the querystring
-async function getFronters() {
-    // Fetch from the pk api
-    let response = await fetch("https://api.pluralkit.me/v2/systems/" + system + "/fronters");
-
-    // Handle erorr if there is any
+// Helper function for interacting with the PluralKit API
+async function pkAPI(path) {
+    // Fetch from the PluralKit API
+    let response = await fetch('https://api.pluralkit.me/v2/' + path)
+    // Handle error if there is one
     if (response.status != 200) {
         showInput(response.status)
         return null
     }
-
-    // Return the fronters if there is no error
     return await response.json()
 }
 
-// Fetches system information (Alli)
-async function getSystem() {
-    let response = await fetch("https://api.pluralkit.me/v2/systems/" + system);
+async function getFronters(system) {
+    return await pkAPI(`systems/${system}/fronters`)
+}
 
-    if (response.status != 200) {
-        showInput(response.status)
-        return null
-    }
-
-    return await response.json()
+async function getSystem(system) {
+    return await pkAPI(`systems/${system}`)
 }
 
 function backButton() {
@@ -54,8 +48,8 @@ function backButton() {
 }
 
 // Renders the list of current fronters
-async function renderFronters() {
-    const fronters = await getFronters();
+async function renderFronters(system) {
+    const fronters = await getFronters(system);
 
     // Handle system being switched out
     if (fronters.members.length == 0) {
@@ -65,7 +59,7 @@ async function renderFronters() {
     }
 
     // System name logic (Alli)
-    const sysObject = await getSystem();
+    const sysObject = await getSystem(system);
 
     // System name container
     const nameContainer = document.getElementById("name-container");
@@ -177,7 +171,7 @@ function showInput(reason) {
 if (system != null & system != "") {
     // Display fronters for requested system
     container.innerHTML = `<code>Loading fronters...</code>`
-    renderFronters();
+    renderFronters(system);
 }
 else {
     // Display system input
