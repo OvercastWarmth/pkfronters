@@ -93,15 +93,29 @@ async function renderCard(member, isFronting) {
 
 async function renderCards(system) {
     // Fetch requests in parallel
-    let [fronting, members, systemInfo] = await Promise.all([
+    let [fronting, members] = await Promise.all([
         getFronters(system),
-        getMembers(system),
-        getSystemInfo(system)
+        getMembers(system)
     ])
 
     // Separate the members
     members = separateMembers(fronting, members)
     delete fronting
+
+    let html = ''
+    for (const fronter of members.fronting) {
+        html += await renderCard(fronter, true)
+    }
+    for (const nonFronter of members.nonFronting) {
+        html += await renderCard(nonFronter, false)
+    }
+
+    // Display the formatted fronters
+    container.innerHTML = html
+}
+
+async function updateTitles(system) {
+    let systemInfo = await getSystemInfo(system)
 
     // System name container
     const nameContainer = document.getElementById("name-container");
@@ -132,19 +146,6 @@ async function renderCards(system) {
             nameContainer.innerHTML = `<h1><code> ${system} </code> Fronter Display</h1>`
         }
     }
-
-    let html = ''
-    for (const fronter of members.fronting) {
-        html += await renderCard(fronter, true)
-    }
-    for (const nonFronter of members.nonFronting) {
-        html += await renderCard(nonFronter, false)
-    }
-
-    // Display the formatted fronters
-    container.innerHTML = html;
-
-    backButton()
 }
 
 // Function for displaying system ID input
@@ -176,7 +177,8 @@ function showInput(reason) {
 if (system != null & system != "") {
     // Display fronters for requested system
     container.innerHTML = `<code>Loading fronters...</code>`
-    renderCards(system);
+    Promise.all([updateTitles(system), renderCards(system)])
+    backButton()
 }
 else {
     // Display system input
