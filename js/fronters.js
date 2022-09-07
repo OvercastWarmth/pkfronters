@@ -56,8 +56,10 @@ function separateMembers(fronting, members) {
 
 function backButton() {
     // Back Button (Alli)
+    // TODO: refactor to use buttons instead, or add all the required aria properties
     let segment = `<form>
                         <input type="submit" value="Go Back">
+                        &mdash;
                     </form>
                     <!--<br>
                     <a href="systems.html">
@@ -79,10 +81,12 @@ async function renderCard(member, isFronting) {
     }
     */
     return `
-        <div class="card ${isFronting ? 'fronting' : 'non-fronting'}", style="border-left-color: #${member.color}">
+        <div class="card ${isFronting ? 'fronting' : 'non-fronting'}", style="--border-color: #${member.color}">
             <img src="${member.avatar_url == null ? 'blank.png' : member.avatar_url}" alt="Profile Picture">
-            <h2>${member.name}</h2>
-            <p>${member.pronouns == null ? 'This member has no pronouns set.' : member.pronouns}</p>
+            <div class="card-info">
+                <h2>${member.name}</h2>
+                <p>${member.pronouns == null ? 'This member has no pronouns set.' : member.pronouns}</p>
+            </div>
         </div>
     `
 }
@@ -94,14 +98,14 @@ async function renderCards(system) {
         getMembers(system),
         getSystemInfo(system)
     ])
-    
+
     // Separate the members
     members = separateMembers(fronting, members)
     delete fronting
-    
+
     // System name container
     const nameContainer = document.getElementById("name-container");
-    
+
     // System Colour
     let colour = systemInfo.color;
 
@@ -128,7 +132,7 @@ async function renderCards(system) {
             nameContainer.innerHTML = `<h1><code> ${system} </code> Fronter Display</h1>`
         }
     }
-    
+
     let html = ''
     for (const fronter of members.fronting) {
         html += await renderCard(fronter, true)
@@ -136,10 +140,10 @@ async function renderCards(system) {
     for (const nonFronter of members.nonFronting) {
         html += await renderCard(nonFronter, false)
     }
-    
+
     // Display the formatted fronters
     container.innerHTML = html;
-    
+
     backButton()
 }
 
@@ -161,9 +165,9 @@ function showInput(reason) {
     };
 
     // Create form for inputting system ID
-    container.innerHTML = `<form>
-                            <label name="sys">${label}</label>
-                            <input type="text" name="sys">
+    container.innerHTML = `<form class="system-form">
+                            <label for="sys">${label}</label>
+                            <input type="text" name="sys" id="sys">
                             <input type="submit" value="Submit">
                         </form>`
 }

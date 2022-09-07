@@ -4,27 +4,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/fronters.css">
-    
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title id="tabname">
         System Fronter Display
     </title>
-    <link rel="icon" type="image/x-icon" href="img/favicon.png">
+
+    <script src="js/fronters.js" defer></script>
 </head>
 
 <body>
-    <div class="title" id="name-container">
+    <header class="title" id="name-container">
         <h1>
             System Fronter Display
         </h1>
-    </div>
-    <hr style="width:25%; margin-left:0px; margin-right:auto;">
-    
-    <div class="container"></div>
-    <br style="clear: both;">
-    <div class="goBack"></div>
-</body>
+    </header>
 
-<footer>
-    <h4 style="font-style:italic;"><a href="credits.html">Credits</a></h4>
-    <script src="js/fronters.js"></script>
-</footer>
+    <main>
+        <div class="container"></div>
+        <br style="clear: both;">
+    </main>
+
+    <div style="flex-grow: 1;"></div>
+
+    <footer>
+        <div class="goBack"></div>
+        <a href="credits.html" class="credits button">Credits</a>
+    </footer>
+</body>
