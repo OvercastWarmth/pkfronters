@@ -18,8 +18,7 @@ async function pkAPI(path) {
     let response = await fetch('https://api.pluralkit.me/v2/' + path)
     // Handle error if there is one
     if (response.status != 200) {
-        showInput(response.status)
-        return null
+        throw response.status
     }
     return await response.json()
 }
@@ -152,18 +151,23 @@ async function updateTitles(system) {
 function showInput(reason) {
     let label;
 
-    if (reason == 404) {
-        // Not found
-        label = "There is no system by that ID."
+    switch (reason) {
+        case null:  // No system ID specified in URL
+            label = "Please enter a system ID:"
+            break
+        case 403:  // Forbidden
+            label = "This system has their fronters hidden."
+            break
+        case 404:  // Not Found
+            label = "There is no system by that ID."
+            break
+        case 429:  // Too Many Requests
+            label = "Slow down! Too many requests (rate limit)."
+            break
+        default:  // Something else happened
+            label = "Unknown error: " + reason
+            break
     }
-    else if (reason == 403) {
-        // Forbidden
-        label = "This system has their fronters hidden."
-    }
-    else if (reason == null) {
-        // No system ID provided
-        label = "Please enter a system ID:"
-    };
 
     // Create form for inputting system ID
     container.innerHTML = `<form class="system-form">
@@ -177,7 +181,9 @@ function showInput(reason) {
 if (system != null & system != "") {
     // Display fronters for requested system
     container.innerHTML = `<code>Loading fronters...</code>`
-    Promise.all([updateTitles(system), renderCards(system)])
+    Promise.all([updateTitles(system), renderCards(system)]).catch(err => {
+        showInput(err)
+    })
     backButton()
 }
 else {
