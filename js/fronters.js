@@ -7,7 +7,7 @@
 
 // Collect system ID from query string
 const queryString = window.location.search;
-const system = new URLSearchParams(queryString).get("sys");
+let system = new URLSearchParams(queryString).get("sys");
 
 // Main document container
 const cardsContainer = document.querySelector('.cards-container');
@@ -164,6 +164,9 @@ function showInput(reason) {
         case 429:  // Too Many Requests
             label = "Slow down! Too many requests (rate limit)."
             break
+        case 'Invalid format':  // System ID is in an invalid format
+            label = "Invalid format! System ID must be either a 5 letter ID, a Discord snowflake, or a system UUID."
+            break
         default:  // Something else happened
             label = "Unknown error: " + reason
             break
@@ -182,6 +185,24 @@ function showInput(reason) {
 (async () => {
     // Handles which display appears on the page
     if (system != null & system != "") {
+        // Lowercase the string
+        system = system.toLowerCase()
+        
+        // Check that the system requested has a valid ID
+        if (!new RegExp(
+            '^' +  // Start of line
+            '([a-z]{5}' +  // 5 letter system ID
+            '|\\d+' +  // Discord snowflake
+            '|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' +  // UUID with dashes
+            '|[0-9a-f]{32}' +  // UUID without dashes
+            '|\\{[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\}' +  // UUID surrounded by braces
+            ')$'  // End of line
+        ).test(system)) {
+            console.error(`Invalid format system ID: '${system}'`)
+            showInput('Invalid format')
+            return
+        }
+        
         // Display fronters for requested system
         cardsContainer.innerHTML = `<code>Loading fronters...</code>`
         try {
