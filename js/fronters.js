@@ -10,7 +10,7 @@ const queryString = window.location.search;
 const system = new URLSearchParams(queryString).get("sys");
 
 // Main document container
-const container = document.querySelector('.container');
+const cardsContainer = document.querySelector('.cards-container');
 
 // Helper function for interacting with the PluralKit API
 async function pkAPI(path) {
@@ -18,8 +18,7 @@ async function pkAPI(path) {
     let response = await fetch('https://api.pluralkit.me/v2/' + path)
     // Handle error if there is one
     if (response.status != 200) {
-        showInput(response.status)
-        return null
+        throw response.status
     }
     return await response.json()
 }
@@ -111,7 +110,7 @@ async function renderCards(system) {
     }
 
     // Display the formatted fronters
-    container.innerHTML = html
+    cardsContainer.innerHTML = html
 }
 
 async function updateTitles(system) {
@@ -152,35 +151,56 @@ async function updateTitles(system) {
 function showInput(reason) {
     let label;
 
-    if (reason == 404) {
-        // Not found
-        label = "There is no system by that ID."
+    switch (reason) {
+        case null:  // No system ID specified in URL
+            label = "Please enter a system ID:"
+            break
+        case 403:  // Forbidden
+            label = "This system has their fronters hidden."
+            break
+        case 404:  // Not Found
+            label = "There is no system by that ID."
+            break
+        case 429:  // Too Many Requests
+            label = "Slow down! Too many requests (rate limit)."
+            break
+        default:  // Something else happened
+            label = "Unknown error: " + reason
+            break
     }
-    else if (reason == 403) {
-        // Forbidden
-        label = "This system has their fronters hidden."
-    }
-    else if (reason == null) {
-        // No system ID provided
-        label = "Please enter a system ID:"
-    };
 
     // Create form for inputting system ID
-    container.innerHTML = `<form class="system-form">
+    document.querySelector('.input-container').innerHTML = `<form class="system-form">
                             <label for="sys">${label}</label>
                             <input type="text" name="sys" id="sys">
                             <input type="submit" value="Submit">
                         </form>`
 }
 
-// Handles which display appears on the page
-if (system != null & system != "") {
-    // Display fronters for requested system
-    container.innerHTML = `<code>Loading fronters...</code>`
-    Promise.all([updateTitles(system), renderCards(system)])
-    backButton()
-}
-else {
-    // Display system input
-    showInput(null)
-};
+// Top-level await doesn't seem to work in top-level code blocks, so we put
+// everything inside an anonymous async function and call it immediately.
+(async () => {
+    // Handles which display appears on the page
+    if (system != null & system != "") {
+        // Display fronters for requested system
+        cardsContainer.innerHTML = `<code>Loading fronters...</code>`
+        try {
+            await Promise.all([
+                updateTitles(system),
+                renderCards(system).catch((err) => {
+                    // Remove the "Loading fronters..." text since they're not
+                    // being loaded anymore.
+                    cardsContainer.innerHTML = ''
+                    throw err
+            })])
+        } catch (err) {
+            console.error(`Error during rendering for system '${system}': ${err}`)
+            showInput(err)
+        }
+        backButton()
+    }
+    else {
+        // Display system input
+        showInput(null)
+    };
+})();

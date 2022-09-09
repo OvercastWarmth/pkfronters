@@ -38,7 +38,7 @@ h1 {
     display: inline-block;
 }
 
-.container {
+.cards-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -146,6 +146,7 @@ button:active, button:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 1.5rem;
 }
 
 .system-form > label {
