@@ -5,10 +5,6 @@
     Purrrpley
 */
 
-// Collect system ID from query string
-const queryString = window.location.search;
-let system = new URLSearchParams(queryString).get("sys");
-
 // Main document container
 const cardsContainer = document.querySelector('.cards-container');
 
@@ -180,24 +176,31 @@ function showInput(reason) {
                         </form>`
 }
 
+function isValidFormatSystemID(systemID) {
+    return new RegExp(
+        '^' +  // Start of line
+        '([a-z]{5}' +  // 5 letter system ID
+        '|\\d+' +  // Discord snowflake
+        '|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' +  // UUID with dashes
+        '|[0-9a-f]{32}' +  // UUID without dashes
+        '|\\{[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\}' +  // UUID surrounded by braces
+        ')$'  // End of line
+    ).test(systemID)
+}
+
 // Top-level await doesn't seem to work in top-level code blocks, so we put
 // everything inside an anonymous async function and call it immediately.
 (async () => {
+    // Collect system ID from query string
+    let system = new URLSearchParams(window.location.search).get("sys")
+    
     // Handles which display appears on the page
     if (system != null & system != "") {
         // Lowercase the string
         system = system.toLowerCase()
         
-        // Check that the system requested has a valid ID
-        if (!new RegExp(
-            '^' +  // Start of line
-            '([a-z]{5}' +  // 5 letter system ID
-            '|\\d+' +  // Discord snowflake
-            '|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' +  // UUID with dashes
-            '|[0-9a-f]{32}' +  // UUID without dashes
-            '|\\{[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\}' +  // UUID surrounded by braces
-            ')$'  // End of line
-        ).test(system)) {
+        // Guard clause for invalid system IDs
+        if (!isValidFormatSystemID(system)) {
             console.error(`Invalid format system ID: '${system}'`)
             showInput('Invalid format')
             return
