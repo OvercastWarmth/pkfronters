@@ -20,7 +20,14 @@ async function pkAPI(path) {
 }
 
 async function getFronters(system) {
-    let fronters = (await pkAPI(`systems/${system}/fronters`)).members
+    try {
+        var fronters = (await pkAPI(`systems/${system}/fronters`)).members
+    } catch (err) {
+        if (err !== 204) {
+            throw err
+        }
+        return []
+    }
     // Return only the UUIDs. The other data we get from the `getMembers()`
     // call, so we only need to store it there and not here too. If the system
     // is switched out, it will return an empty array.
