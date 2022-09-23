@@ -83,11 +83,11 @@ async function renderCard(member, isFronting) {
     }
     */
     return `
-        <div class="card ${isFronting ? 'fronting' : 'non-fronting'}", style="--border-color: #${member.color}">
-            <img src="${member.avatar_url == null ? 'blank.png' : member.avatar_url}" alt="Profile Picture">
+        <div class="card ${isFronting ? 'fronting' : 'non-fronting'}", style="--border-color: #${escapeHTML(member.color)}">
+            <img src="${member.avatar_url == null ? 'blank.png' : escapeHTML(member.avatar_url)}" alt="Profile Picture">
             <div class="card-info">
-                <h2>${member.name}</h2>
-                <p>${member.pronouns == null ? 'This member has no pronouns set.' : member.pronouns}</p>
+                <h2>${escapeHTML(member.name)}</h2>
+                <p>${member.pronouns == null ? 'This member has no pronouns set.' : escapeHTML(member.pronouns)}</p>
             </div>
         </div>
     `
@@ -130,20 +130,20 @@ async function updateTitles(system) {
         let sysName = systemInfo.name;
         sysName += " Fronter Display";
 
-        document.getElementById("tabname").innerHTML = sysName
+        document.getElementById("tabname").textContent = sysName
 
         // Add system colour to title (if it has one)
         if (colour != null) {
-            nameContainer.innerHTML = `<h1><span class="title" style = "color: #${colour};"> ${systemInfo.name} </span> Fronter Display</h1>`
+            nameContainer.innerHTML = `<h1><span class="title" style = "color: #${escapeHTML(colour)};"> ${escapeHTML(systemInfo.name)} </span> Fronter Display</h1>`
         } else {
-            nameContainer.innerHTML = `<h1>${sysName}</h1>`
+            nameContainer.innerHTML = `<h1>${escapeHTML(sysName)}</h1>`
         }
     } else {
         // Use systems ID as it's name as a fallback
-        document.getElementById("tabname").innerHTML = system + " Fronter Display"
+        document.getElementById("tabname").textContent = system + " Fronter Display"
 
         if (colour != null) {
-            nameContainer.innerHTML = `<h1><code style = "color: #${colour};"> ${system} </code> Fronter Display</h1>`
+            nameContainer.innerHTML = `<h1><code style = "color: #${escapeHTML(colour)};"> ${system} </code> Fronter Display</h1>`
         } else {
             nameContainer.innerHTML = `<h1><code> ${system} </code> Fronter Display</h1>`
         }
@@ -171,7 +171,7 @@ function showInput(reason) {
             label = "Invalid format! System ID must be either a 5 letter ID, a Discord snowflake, or a system UUID."
             break
         default:  // Something else happened
-            label = "Unknown error: " + reason
+            label = "Unknown error: " + escapeHTML(reason)
             break
     }
 
@@ -193,6 +193,13 @@ function isValidFormatSystemID(systemID) {
         '|\\{[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\}' +  // UUID surrounded by braces
         ')$'  // End of line
     ).test(systemID)
+}
+
+// Escape HTML - very important to not be vulnerable to JS injection attacks!
+function escapeHTML(str) {
+    let div = document.createElement('div')
+    div.textContent = str
+    return div.innerHTML
 }
 
 // Top-level await doesn't seem to work in top-level code blocks, so we put
